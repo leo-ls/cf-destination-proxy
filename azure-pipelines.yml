@@ -1,0 +1,47 @@
+trigger:
+  - main
+
+pool:
+  vmImage: "ubuntu-latest"
+
+steps:
+  - checkout: self
+    clean: true
+    persistCredentials: true
+
+  - task: NodeTool@0
+    displayName: "Install Node.js"
+    inputs:
+      versionSpec: "12.x"
+
+  - bash: |
+      echo ">>> Configure Git"
+      git config --global user.name $(GIT_COMMITER_NAME)
+      git config --global user.email $(GIT_COMMITER_EMAIL)
+      git checkout master --progress --force
+      echo ">>> Build"
+      npm install --no-package-lock
+      npm run release
+      npm run build
+      echo ">>> Publish NPM package"
+      npm publish
+      git push origin HEAD:master
+    displayName: "Build"
+    condition: succeeded()
+    env:
+      GIT_COMMITER_NAME: $(GIT_COMMITER_NAME)
+      GIT_COMMITER_EMAIL: $(GIT_COMMITER_EMAIL)
+
+  - task: CopyFiles@2
+    displayName: "Copy .mtar to staging directory"
+    inputs:
+      contents: "mta_archives/**"
+      targetFolder: $(Build.ArtifactStagingDirectory)
+
+  - task: GitHubRelease@0
+    displayName: "Create GitHub release"
+    inputs:
+      gitHubConnection: leo-ls
+      repositoryName: leo-ls/cf-destination-proxy
+      action: create
+      isDraft: false

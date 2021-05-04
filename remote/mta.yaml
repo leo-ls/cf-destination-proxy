@@ -1,0 +1,40 @@
+_schema-version: "3.2"
+ID: cf-destination-proxy
+version: 0.0.0
+parameters:
+  enable-parallel-deployments: true
+modules:
+  - name: cf-destination-proxy
+    type: nodejs
+    path: app
+    requires:
+      - name: cf-destination-proxy-uaa
+      - name: cf-destination-proxy-connectivity
+      - name: cf-destination-proxy-destination
+    parameters:
+      disk-quota: 128M
+      memory: 64M
+    build-parameters:
+      ignore: ["default-env.json"]
+resources:
+  - name: cf-destination-proxy-uaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      path: ./xs-security.json
+      service: xsuaa
+      service-plan: application
+  - name: cf-destination-proxy-connectivity
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: connectivity
+      service-plan: lite
+  - name: cf-destination-proxy-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm install --no-package-lock

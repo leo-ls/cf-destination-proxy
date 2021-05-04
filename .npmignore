@@ -1,0 +1,12 @@
+default-env.json
+mta_archives
+*mta_build_tmp*
+Makefile*
+node_modules
+remote
+test
+.env*
+.eslintrc.json
+.gitignore
+.versionrc.js
+azure-pipelines.yml

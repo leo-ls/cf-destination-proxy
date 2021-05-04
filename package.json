@@ -1,0 +1,56 @@
+{
+  "name": "cf-destination-proxy",
+  "version": "0.0.0",
+  "description": "Proxy for local development using Cloud Foundry destinations in SAP BTP",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leo-ls/cf-destination-proxy.git"
+  },
+  "keywords": [
+    "SAP",
+    "BTP",
+    "CF",
+    "destination",
+    "proxy",
+    "cfdp"
+  ],
+  "author": "Leonardo Schmidt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leo-ls/cf-destination-proxy/issues"
+  },
+  "homepage": "https://github.com/leo-ls/cf-destination-proxy#readme",
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "bin": {
+    "cfdp": "./bin/cfdp.js"
+  },
+  "devDependencies": {
+    "cross-var": "^1.1.0",
+    "eslint": "^7.24.0",
+    "js-yaml": "^4.1.0",
+    "mbt": "^1.1.1",
+    "standard-version": "^9.2.0"
+  },
+  "dependencies": {
+    "@sap/xsenv": "^3.1.0",
+    "@sap/xssec": "^3.2.0",
+    "axios": "^0.21.1",
+    "commander": "^7.2.0",
+    "dotenv": "^8.2.0",
+    "http-proxy": "^1.18.1",
+    "inquirer": "^8.0.0"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "build": "mbt build --source=./remote --target=../mta_archives",
+    "dev:deploy": "cross-var cf deploy mta_archives/cf-destination-proxy_$npm_package_version.mtar --delete-services",
+    "release": "standard-version"
+  },
+  "standard-version": {
+    "skip": {
+      "tag": true
+    }
+  }
+}

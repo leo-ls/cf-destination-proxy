@@ -1,0 +1,10 @@
+{
+  "authenticationMethod": "route",
+  "routes": [
+    {
+      "source": "^/([^/]+)(.*)$",
+      "destination": "$1",
+      "target": "$2"
+    }
+  ]
+}

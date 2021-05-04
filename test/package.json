@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "dependencies": {
+    "@sap/approuter": "^10.2.0",
+    "dotenv": "^8.2.0"
+  },
+  "scripts": {
+    "prestart": "cfdp run",
+    "start": "node -r dotenv/config node_modules/@sap/approuter/approuter.js"
+  }
+}

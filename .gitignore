@@ -1,0 +1,6 @@
+default-env.json
+mta_archives
+*mta_build_tmp*
+Makefile*
+node_modules
+.env*
