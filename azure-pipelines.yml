@@ -47,7 +47,7 @@ steps:
   - task: GitHubRelease@0
     displayName: "Create GitHub release"
     inputs:
-      gitHubConnection: leo-ls
+      gitHubConnection: github.com_leo-ls
       repositoryName: leo-ls/cf-destination-proxy
       action: create
       isDraft: false
