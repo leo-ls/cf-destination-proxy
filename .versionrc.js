@@ -1,6 +1,7 @@
 const { load, dump } = require("js-yaml");
 
 module.exports = {
+  releaseCommitMessageFormat: "chore(release): {{currentTag}} [skip ci]",
   bumpFiles: [
     {
       filename: "./remote/mta.yaml",

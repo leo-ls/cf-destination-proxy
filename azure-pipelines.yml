@@ -14,6 +14,11 @@ steps:
     inputs:
       versionSpec: "12.x"
 
+  - task: npmAuthenticate@0
+    dislayName: "Authenticate NPM connection"
+    inputs:
+      customEndpoint: npmjs.com_leo-ls
+
   - bash: |
       echo ">>> Configure Git"
       git config --global user.name $(GIT_COMMITTER_NAME)
@@ -30,14 +35,12 @@ steps:
     env:
       GIT_COMMITTER_NAME: $(GIT_COMMITTER_NAME)
       GIT_COMMITTER_EMAIL: $(GIT_COMMITTER_EMAIL)
-      NPM_TOKEN: $(NPM_TOKEN)
 
   - task: Npm@1
     displayName: "Publish NPM package"
     inputs:
       command: publish
-    env:
-      NPM_TOKEN: $(NPM_TOKEN)
+      publishEndpoint: npmjs.com_leo-ls
 
   - task: CopyFiles@2
     displayName: "Copy .mtar to staging directory"
