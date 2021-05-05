@@ -127,6 +127,13 @@ const run = (port, log) => {
     proxy.web(req, res);
   });
 
+  process.on("SIGINT", () => {
+    server.close(() => {
+      console.log("[info]", "cf-destination-proxy shutting down");
+      process.exit(0);
+    });
+  });
+
   server.listen(port);
   console.log("[info]", `cf-destination-proxy running on port ${port}`);
 };
