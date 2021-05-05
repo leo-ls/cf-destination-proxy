@@ -1,6 +1,6 @@
-_schema-version: "3.2"
+_schema-version: '3.2'
 ID: cf-destination-proxy
-version: 0.0.0
+version: 0.0.1
 parameters:
   enable-parallel-deployments: true
 modules:
@@ -15,7 +15,8 @@ modules:
       disk-quota: 128M
       memory: 64M
     build-parameters:
-      ignore: ["default-env.json"]
+      ignore:
+        - default-env.json
 resources:
   - name: cf-destination-proxy-uaa
     type: org.cloudfoundry.managed-service
