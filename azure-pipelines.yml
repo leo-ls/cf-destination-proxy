@@ -15,7 +15,7 @@ steps:
       versionSpec: "12.x"
 
   - task: npmAuthenticate@0
-    dislayName: "Authenticate NPM connection"
+    displayName: "Authenticate NPM connection"
     inputs:
       customEndpoint: npmjs.com_leo-ls
 
