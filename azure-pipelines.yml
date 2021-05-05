@@ -16,9 +16,9 @@ steps:
 
   - bash: |
       echo ">>> Configure Git"
-      git config --global user.name $(GIT_COMMITER_NAME)
-      git config --global user.email $(GIT_COMMITER_EMAIL)
-      git checkout master --progress --force
+      git config --global user.name $(GIT_COMMITTER_NAME)
+      git config --global user.email $(GIT_COMMITTER_EMAIL)
+      git checkout main --progress --force
       echo ">>> Build"
       npm install --no-package-lock
       npm run release
@@ -30,6 +30,7 @@ steps:
     env:
       GIT_COMMITTER_NAME: $(GIT_COMMITTER_NAME)
       GIT_COMMITTER_EMAIL: $(GIT_COMMITTER_EMAIL)
+      NPM_TOKEN: $(NPM_TOKEN)
 
   - task: Npm@1
     displayName: "Publish NPM package"
