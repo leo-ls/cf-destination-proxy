@@ -2,6 +2,8 @@
 
 Proxy for local development using Cloud Foundry destinations in SAP BTP
 
+[![Build Status](https://dev.azure.com/leo-ls/cf-destination-project/_apis/build/status/leo-ls.cf-destination-proxy?branchName=main)](https://dev.azure.com/leo-ls/cf-destination-project/_build/latest?definitionId=3&branchName=main)
+
 ## Motivation
 
 Local IDEs are still superior in functionality in many ways when compared to online ones.
@@ -24,7 +26,7 @@ Proxying local requests to CF destinations takes 3 steps:
 
 This tool should be deployed in a development space in SAP BTP (preferrably 😅), so you must have appropriate accesses to the deployment target.
 
-Also, your project must have a local application router.
+Also, your project must have a local [application router](https://www.npmjs.com/package/@sap/approuter).
 
 ### Deployment
 
@@ -46,7 +48,7 @@ npm install --save-dev cf-destination-proxy
 ```bash
 cfdp bind https://your-cf-destination-proxy-deployed-app-route
 ```
-> This will create a local ```.env``` file with binding information for the deployed proxy (similar to the SAP BAS "Run configuration" service binding).
+> This will create a local ```.env``` file with binding information from the deployed proxy (similar to the SAP BAS "Run configuration" service binding).
 
 #### 3. Load the ```.env``` file when you run your approuter locally.  
 
@@ -56,7 +58,7 @@ For example, in a ```.vscode/launch.json``` file, add this property to your run 
 "envFile": "${workspaceFolder}/approuter/.env"
 ```
 
-#### 4. To start the local proxy, navigate ```.env``` file path and run:
+#### 4. To start the local proxy, navigate to the ```.env``` file path and run:
 
 ```bash
 cfdp run
@@ -64,4 +66,4 @@ cfdp run
 
 ## To-dos
 
-[ ] Add support for websockets
+- [ ] Add support for websockets

@@ -23,14 +23,20 @@ steps:
       npm install --no-package-lock
       npm run release
       npm run build
-      echo ">>> Publish NPM package"
-      npm publish
-      git push origin HEAD:master
+      echo ">>> Push results"
+      git push --follow-tags origin main
     displayName: "Build"
     condition: succeeded()
     env:
-      GIT_COMMITER_NAME: $(GIT_COMMITER_NAME)
-      GIT_COMMITER_EMAIL: $(GIT_COMMITER_EMAIL)
+      GIT_COMMITTER_NAME: $(GIT_COMMITTER_NAME)
+      GIT_COMMITTER_EMAIL: $(GIT_COMMITTER_EMAIL)
+
+  - task: Npm@1
+    displayName: "Publish NPM package"
+    inputs:
+      command: publish
+    env:
+      NPM_TOKEN: $(NPM_TOKEN)
 
   - task: CopyFiles@2
     displayName: "Copy .mtar to staging directory"

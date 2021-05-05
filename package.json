@@ -27,8 +27,11 @@
     "cfdp": "./bin/cfdp.js"
   },
   "devDependencies": {
+    "@commitlint/cli": "^12.1.1",
+    "@commitlint/config-conventional": "^12.1.1",
     "cross-var": "^1.1.0",
     "eslint": "^7.24.0",
+    "husky": "^6.0.0",
     "js-yaml": "^4.1.0",
     "mbt": "^1.1.1",
     "standard-version": "^9.2.0"
@@ -52,5 +55,15 @@
     "skip": {
       "tag": true
     }
-  }
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  }  
 }
