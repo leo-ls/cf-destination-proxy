@@ -1,6 +1,7 @@
+.env*
+.npmrc
 default-env.json
+Makefile*
 mta_archives
 *mta_build_tmp*
-Makefile*
 node_modules
-.env*

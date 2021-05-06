@@ -12,7 +12,10 @@ steps:
   - task: NodeTool@0
     displayName: "Install Node.js"
     inputs:
-      versionSpec: "12.x"
+      versionSpec: "14.x"
+
+  - bash: touch .npmrc
+    displayName: "Create .npmrc for auth"
 
   - task: npmAuthenticate@0
     displayName: "Authenticate NPM connection"
