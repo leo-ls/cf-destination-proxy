@@ -4,6 +4,10 @@ module.exports = {
   releaseCommitMessageFormat: "chore(release): {{currentTag}} [skip ci]",
   bumpFiles: [
     {
+      filename: "./package.json",
+      type: "json"
+    },
+    {
       filename: "./remote/mta.yaml",
       updater: {
         readVersion: (contents) => {
