@@ -14,8 +14,8 @@ steps:
     inputs:
       versionSpec: "14.x"
 
-  - bash: touch .npmrc
-    displayName: "Create .npmrc for auth"
+  - bash: echo -e "registry=https://registry.npmjs.org\nalways-auth=true" >> ./.npmrc
+    displayName: "Create default .npmrc for auth"
 
   - task: npmAuthenticate@0
     displayName: "Authenticate NPM connection"
@@ -28,7 +28,7 @@ steps:
       git config --global user.email $(GIT_COMMITTER_EMAIL)
       git checkout main --progress --force
       echo ">>> Build"
-      npm install --no-package-lock
+      npm install
       npm run release
       npm run build
       echo ">>> Push results"
