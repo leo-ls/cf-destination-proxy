@@ -1,6 +1,6 @@
 {
   "name": "cf-destination-proxy",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "description": "Proxy for local development using Cloud Foundry destinations in SAP BTP",
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
   "devDependencies": {
     "@commitlint/cli": "^12.1.1",
     "@commitlint/config-conventional": "^12.1.1",
+    "conventional-changelog-cli": "^2.1.1",
     "cross-var": "^1.1.0",
     "eslint": "^7.24.0",
     "husky": "^6.0.0",
@@ -49,7 +50,8 @@
     "lint": "eslint .",
     "build": "mbt build --source=./remote --target=../mta_archives",
     "dev:deploy": "cross-var cf deploy mta_archives/cf-destination-proxy_$npm_package_version.mtar --delete-services",
-    "release": "standard-version"
+    "release": "standard-version",
+    "remote:release": "conventional-changelog --preset angular --context ./package.json --commit-path ./remote --outfile ./remote/RELEASE.md"
   },
   "config": {
     "commitizen": {
