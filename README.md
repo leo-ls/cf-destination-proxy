@@ -63,38 +63,42 @@ For example, in a ```.vscode/launch.json``` file, add this property to your run 
 ```bash
 cfdp run
 ```
-To automate this in VS Code, create a script in your project's ```package.json``` file like this:
+To automate this in VS Code, create a script in your approuter's ```package.json``` file like this:
 
 ```json
 "scripts": {
-    "proxy": "cfdp run"
+    "start": "node node_modules/@sap/approuter/approuter.js",
+    "proxy": "cfdp run",
 ```
 Then, create a task in ```.vscode/launch.json``` like so:
 ```json
+"version": "2.0.0",
 "tasks": [
     {
         "type": "npm",
         "script": "proxy",
-        "path": "${workspaceFolder}/approuter",
+        "path": "approuter/",
         "isBackground": true,
-        "problemMatcher": {
-            "pattern": {
-                "regexp": "^\\[(\\w+)\\]\\s(.*)",
-                "severity": 1,
-                "message": 2
-            },
-            "background": {
-                "beginsPattern": "^\\[info\\] cf-destination-proxy running on port",
-                "endsPattern": "^\\[info\\] cf-destination-proxy shutting down"
+        "problemMatcher": [
+            {
+                "owner": "custom",
+                "pattern": {
+                    "regexp": ".",
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^\\[info\\] cf-destination-proxy running on port",
+                    "endsPattern": "^\\[info\\] cf-destination-proxy running on port"
+                }
             }
-        },
-        "label": "Run cf-destination-proxy",
-        "detail": "cfdp run"
-    }
+        ],
+        "label": "Run cf-destination-proxy"
+    },
 ```
 At last, add the created task as a ```preLaunchTask``` in your run configuration:
 ```json
-"preLaunchTask": "Run cf-destination-proxy"
+"preLaunchTask": "Run cf-destination-proxy",
+"outputCapture": "std"
 ```
 
 ## To-dos
