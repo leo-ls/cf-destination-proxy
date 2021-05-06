@@ -42,7 +42,7 @@ steps:
     inputs:
       command: publish
       publishRegistry: useExternalRegistry
-      publishEndpoint: https://registry.npmjs.com
+      publishEndpoint: npmjs.org_automation
 
   - task: CopyFiles@2
     displayName: "Copy .mtar to staging directory"
