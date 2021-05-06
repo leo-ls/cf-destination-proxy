@@ -63,6 +63,7 @@ steps:
       releaseNotesFile: ./remote/RELEASE.md
       assets: $(Build.ArtifactStagingDirectory)/mta_archives/*.mtar
       isDraft: false
+      addChangeLog: false
 
   - bash: git push --follow-tags origin main
     displayName: "Push results"
