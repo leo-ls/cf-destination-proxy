@@ -61,7 +61,7 @@ steps:
       tag: $(LATEST_TAG)
       releaseNotesSource: file
       releaseNotesFile: ./remote/RELEASE.md
-      assets: $(Build.ArtifactStagingDirectory)/*.mtar
+      assets: $(Build.ArtifactStagingDirectory)/mta_archives/*.mtar
       isDraft: false
 
   - bash: git push --follow-tags origin main
