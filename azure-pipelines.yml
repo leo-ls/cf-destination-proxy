@@ -19,7 +19,7 @@ steps:
       git config --global user.name $(GIT_COMMITTER_NAME)
       git config --global user.email $(GIT_COMMITTER_EMAIL)
       git checkout main --progress --force
-      echo "//registry.npmjs.com:_authToken=$NPM_TOKEN" >> .npmrc
+      echo "//registry.npmjs.org:_authToken=$NPM_TOKEN" >> .npmrc
       echo ">>> Build"
       npm install
       npm run release
