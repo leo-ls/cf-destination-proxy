@@ -27,6 +27,7 @@ steps:
       npm run build
       echo ">>> Push results"
       git push --follow-tags origin main
+      echo "##vso[task.setvariable variable=latest_tag]$(git describe --tags --abbrev=0)"
     displayName: "Build"
     condition: succeeded()
     env:
@@ -39,6 +40,8 @@ steps:
     inputs:
       contents: "mta_archives/**"
       targetFolder: $(Build.ArtifactStagingDirectory)
+      tagSource: manual
+      tag: $(LATEST_TAG)
 
   - task: GitHubRelease@0
     displayName: "Create GitHub release"
