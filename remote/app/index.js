@@ -27,7 +27,7 @@ app.use(passport.authenticate("JWT", { session: false }));
 
 app.use(cors({ optionsSuccessStatus: 200, origin: /^https?:\/\/localhost/ }));
 
-app.use(compression());
+app.use(compression({ threshold: 0 }));
 
 app.use((req, res, next) => {
   const { tokenInfo, method, headers, data } = req;
