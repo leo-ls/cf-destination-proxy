@@ -4,6 +4,7 @@
 .gitignore
 .versionrc.js
 azure-pipelines.yml
+cf-destination-proxy*.tgz
 default-env.json
 Makefile*
 mta_archives
