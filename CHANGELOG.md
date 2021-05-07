@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/leo-ls/cf-destination-proxy/compare/v0.0.7...v0.0.8) (2021-05-07)
+
+
+### Bug Fixes
+
+* Fixed app host matching ([3f3771b](https://github.com/leo-ls/cf-destination-proxy/commit/3f3771bd808199b0e1cc926fa95ac8ea3050027a))
+
 ### [0.0.7](https://github.com/leo-ls/cf-destination-proxy/compare/v0.0.6...v0.0.7) (2021-05-07)
 
 

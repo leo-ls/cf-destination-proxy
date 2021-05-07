@@ -1,6 +1,6 @@
 _schema-version: '3.2'
 ID: cf-destination-proxy
-version: 0.0.7
+version: 0.0.8
 parameters:
   enable-parallel-deployments: true
 modules:
