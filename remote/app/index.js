@@ -14,8 +14,6 @@ const {
 
 const app = express();
 
-app.use(helmet());
-
 if (process.env.NODE_ENV === "development") {
   xsenv.loadEnv();
 }
@@ -25,19 +23,28 @@ passport.use(new JWTStrategy(xsuaa));
 app.use(passport.initialize());
 app.use(passport.authenticate("JWT", { session: false }));
 
-app.use(cors({ optionsSuccessStatus: 200, origin: /^https?:\/\/localhost/ }));
+app.use(helmet());
 
-app.use(compression({ threshold: 0 }));
+app.use((req, _res, next) => {
+  if (req.headers["accept-encoding"]) {
+    req.headers["accept-encoding"] = "gzip";
+  }
+  next();
+});
+
+app.use(compression());
+
+app.use(cors({ optionsSuccessStatus: 200, origin: /^https?:\/\/localhost/ }));
 
 app.use((req, res, next) => {
   const { tokenInfo, method, headers, data } = req;
-  
+
   if (headers["x-destination-authorization"]) {
     headers.authorization = headers["x-destination-authorization"];
   } else {
     delete headers.authorization;
   }
-  
+
   const [, destinationName, url] = req.originalUrl.match(/\/([^/]+)(.*)/);
 
   getDestinationFromDestinationService(destinationName, {
@@ -47,13 +54,13 @@ app.use((req, res, next) => {
       executeHttpRequest(
         destination,
         { method, headers, url, data },
-        { fetchCsrfToken: method !== "GET" }
+        { fetchCsrfToken: Boolean(headers["x-csrf-token"]) }
       )
     )
     .then(({ data: resData, headers: resHeaders, status }) => {
       res.set(resHeaders);
       res.status(status);
-      res.end(resData);
+      res.send(resData);
     })
     .catch(next);
 });
