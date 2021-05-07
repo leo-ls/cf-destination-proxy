@@ -61,10 +61,10 @@ const authenticate = (route, answers) => {
 const getAppGuid = (url, authContext) => {
   console.log("[info]", `Fetching app details for ${url}...`);
 
-  const host = (url.match(/^(https?:\/\/)?([^.]+)/g) || [])[1];
+  const host = (url.match(/^(https?:\/\/)?([^.]+)/) || [])[2];
 
   if (!host) {
-    throw new Error(`Invalid host ${host}`);
+    throw new Error("Invalid host");
   }
 
   const options = Object.assign(
