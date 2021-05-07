@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.9](https://github.com/leo-ls/cf-destination-proxy/compare/v0.0.8...v0.0.9) (2021-05-07)
+
+
+### Bug Fixes
+
+* Fixed appGuid handling & .env generation ([d8481aa](https://github.com/leo-ls/cf-destination-proxy/commit/d8481aa097652128c10266ff150ed99587a83588))
+
 ### [0.0.8](https://github.com/leo-ls/cf-destination-proxy/compare/v0.0.7...v0.0.8) (2021-05-07)
 
 
