@@ -77,13 +77,13 @@ const getAppGuid = (url, authContext) => {
   );
   const cloudFoundryAPI = axios.create(options);
   cloudFoundryAPI.interceptors.response.use(({ data: { resources = [] } }) => {
-    if (!resources[0]) {
+    if (!resources[0] || !resources[0].destinations[0]) {
       throw new Error(
-        `Route ${url} not found. Check the deployed proxy for errors`
+        `App not found on ${url}. Check the deployed proxy for errors`
       );
     }
 
-    return resources[0].destinations.app.guid;
+    return resources[0].destinations[0].app.guid;
   });
 
   return cloudFoundryAPI.get("/v3/routes", options);
@@ -236,7 +236,8 @@ const writeEnv = async (env) => {
       exists = true;
       console.log("[info]", `File ${fileName} created with binding parameters`);
     } else {
-      fileName = `${baseFileName}${++index}`;
+      fileName = `.${++index}${baseFileName}`;
+      exists = false;
     }
   }
 };

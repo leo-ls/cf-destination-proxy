@@ -1,4 +1,4 @@
-.env*
+*.env*
 .npmrc
 cf-destination-proxy*.tgz
 default-env.json
