@@ -2,7 +2,10 @@
 
 const { default: axios } = require("axios");
 const { prompt } = require("inquirer");
-const { promises: { writeFile }, existsSync } = require("fs");
+const {
+  promises: { writeFile },
+  existsSync,
+} = require("fs");
 const { URLSearchParams } = require("url");
 
 const {
@@ -22,125 +25,168 @@ const authenticate = (route, answers) => {
   console.log("[info]", "Authenticating...");
 
   const uaaURL = getCloudFoundryURL(route, "uaa");
+  const apiURL = getCloudFoundryURL(route, "api");
   const { username, password } = answers;
 
-  return axios
-    .post(
-      `${uaaURL}/oauth/token`,
-      new URLSearchParams({
-        grant_type: "password",
-        username,
-        password,
-        client_id: "cf",
-      }),
-      {
-        auth: {
-          username: "cf",
-        },
-      }
-    )
-    .then(({ data: { access_token } }) => {
+  const uaaAPI = axios.create({
+    baseURL: uaaURL,
+    auth: {
+      username: "cf",
+    },
+  });
+  uaaAPI.interceptors.response.use(({ data: { access_token = "" } }) => {
+    if (access_token) {
       console.log("[info]", `Logged in as ${username}`);
+    } else {
+      throw new Error("Authentication failed");
+    }
 
-      return {
-        baseURL: getCloudFoundryURL(route, "api"),
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      };
-    });
+    return {
+      baseURL: apiURL,
+      headers: {
+        Authorization: `Bearer ${access_token}`,
+      },
+    };
+  });
+  const oauthBody = new URLSearchParams({
+    grant_type: "password",
+    username,
+    password,
+    client_id: "cf",
+  });
+
+  return uaaAPI.post("/oauth/token", oauthBody);
 };
 
-const getServiceCredentials = (service, authContext) => {
-  console.log("[info]", `Fetching service credentials for ${service}...`);
+const getAppGuid = (url, authContext) => {
+  console.log("[info]", `Fetching app details for ${url}...`);
+
+  const host = url.replace(/\.cfapps\.\w+\.hana\.ondemand\.com/g, "");
 
   const options = Object.assign(
     {
       params: {
-        type: "app",
-        service_instance_names: service,
+        hosts: host,
       },
     },
     authContext
   );
+  const cloudFoundryAPI = axios.create(options);
+  cloudFoundryAPI.interceptors.response.use(({ data: { resources = [] } }) => {
+    if (!resources[0]) {
+      throw new Error(
+        `Route ${url} not found. Check the deployed proxy for errors`
+      );
+    }
 
-  const serviceCredentialBindings = axios.create(options);
-  serviceCredentialBindings.interceptors.response.use(({ data }) => {
-    const binding = data.resources[0];
+    return resources[0].destinations.app.guid;
+  });
 
-    if (!binding) {
+  return cloudFoundryAPI.get("/v3/routes", options);
+};
+
+const getServiceCredentials = (service, appGuid, authContext) => {
+  console.log("[info]", `Fetching service credentials for ${service}...`);
+
+  const options = {
+    params: {
+      app_guids: appGuid,
+      service_instance_names: service,
+      type: "app",
+    },
+  };
+
+  const cloudFoundryAPI = axios.create(authContext);
+
+  const handleBindingsResponse = ({ data: { resources = [] } }) => {
+    if (!resources[0]) {
       throw new Error(
         `Bindings for ${service} not found. Check the deployed proxy for errors`
       );
     }
 
-    return binding.links.details.href;
-  });
+    return resources[0].links.details.href;
+  };
 
-  const serviceCredentialDetails = axios.create(authContext);
-  serviceCredentialDetails.interceptors.response.use(
-    ({ data: { credentials } }) => credentials
+  const bindingsInterceptor = cloudFoundryAPI.interceptors.response.use(
+    handleBindingsResponse
   );
 
-  return serviceCredentialBindings
+  const handleCredentialsResponse = ({ data }) => {
+    if (!data.credentials) {
+      throw new Error(`API error - could not fetch credentials for ${service}`);
+    }
+
+    return data.credentials;
+  };
+
+  return cloudFoundryAPI
     .get("/v3/service_credential_bindings", options)
-    .then((detailsURL) => serviceCredentialDetails.get(detailsURL));
+    .then((detailsURL) => {
+      cloudFoundryAPI.interceptors.response.eject(bindingsInterceptor);
+      cloudFoundryAPI.interceptors.response.use(handleCredentialsResponse);
+      return cloudFoundryAPI.get(detailsURL);
+    });
 };
 
-const getDestinations = (credentials) => {
+const getDestinationNames = (credentials) => {
   const { uri, url, clientid, clientsecret } = credentials;
 
-  const baseDestinationOptions = {
+  const options = {
     baseURL: uri,
     params: {
       $select: "Name",
     },
   };
-  const subaccountDestinations = axios.create(baseDestinationOptions);
-  subaccountDestinations.interceptors.response.use(({ data }) =>
+  const destinationsAPI = axios.create(options);
+  destinationsAPI.interceptors.response.use(({ data = [] }) =>
     data.map(({ Name }) => Name)
   );
 
-  const oauthOptions = new URLSearchParams({
+  const oauthBody = new URLSearchParams({
     grant_type: "client_credentials",
   });
-  const uaaToken = axios.create({
+  const uaaAPI = axios.create({
     baseURL: url,
     auth: {
       username: clientid,
       password: clientsecret,
     },
   });
-  uaaToken.interceptors.response.use(({ data: { access_token } }) => ({
+  uaaAPI.interceptors.response.use(({ data: { access_token = "" } }) => ({
     headers: {
       Authorization: `Bearer ${access_token}`,
     },
   }));
 
-  return uaaToken
-    .post("/oauth/token", oauthOptions)
-    .then((authorizationHeader) =>
-      subaccountDestinations.get(
+  return uaaAPI
+    .post("/oauth/token", oauthBody)
+    .then((authContext) =>
+      destinationsAPI.get(
         "/destination-configuration/v1/subaccountDestinations",
-        authorizationHeader
+        authContext
       )
     );
 };
 
 const buildEnv = async (route, proxyPort, authContext) => {
+  const appGuid = await getAppGuid(route, authContext);
+
   const credentials = await getServiceCredentials(
     UAA_INSTANCE_NAME,
+    appGuid,
     authContext
   );
   console.log("[info]", `Credentials for ${UAA_INSTANCE_NAME} obtained`);
 
   const destinationCredentials = await getServiceCredentials(
     DESTINATION_INSTANCE_NAME,
+    appGuid,
     authContext
   );
 
   console.log("[info]", "Reading subaccount destinations...");
-  const destinationNames = await getDestinations(destinationCredentials);
+  const destinationNames = await getDestinationNames(destinationCredentials);
   console.log(
     "[info]",
     `Destinations available: ${destinationNames.join(", ")}`
