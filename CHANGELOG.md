@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/leo-ls/cf-destination-proxy/compare/v0.0.5...v0.0.6) (2021-05-07)
+
+
+### Bug Fixes
+
+* Added appGuid fetching & filter ([eafa7db](https://github.com/leo-ls/cf-destination-proxy/commit/eafa7db033aa122426ebe459310967eb7b97629a))
+* Fixed compression ([fd0ef7c](https://github.com/leo-ls/cf-destination-proxy/commit/fd0ef7c5b619f6ff48edf4ea75621398a9101b95))
+
 ### [0.0.5](https://github.com/leo-ls/cf-destination-proxy/compare/v0.0.4...v0.0.5) (2021-05-06)
 
 
