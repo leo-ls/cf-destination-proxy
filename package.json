@@ -1,6 +1,6 @@
 {
   "name": "cf-destination-proxy",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Proxy for local development using Cloud Foundry destinations in SAP BTP",
   "repository": {
     "type": "git",
