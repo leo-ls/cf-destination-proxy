@@ -15,7 +15,7 @@
     "cfdp"
   ],
   "author": "Leonardo Schmidt",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/leo-ls/cf-destination-proxy/issues"
   },
