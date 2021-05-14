@@ -1,5 +1,6 @@
 {
   "authenticationMethod": "route",
+  "sessionTimeout": 15,
   "routes": [
     {
       "source": "^/([^/]+)(.*)$",
