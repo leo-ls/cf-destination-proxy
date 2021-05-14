@@ -3,6 +3,7 @@
 .eslintrc.json
 .gitignore
 .versionrc.js
+.vscode
 azure-pipelines.yml
 cf-destination-proxy*.tgz
 default-env.json
