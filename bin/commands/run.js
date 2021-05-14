@@ -9,84 +9,67 @@ const {
   posix: { join },
 } = require("path");
 const { cfServiceCredentials } = require("@sap/xsenv");
-const { createSecurityContext, requests } = require("@sap/xssec");
+const {
+  createSecurityContext,
+  requests: { requestClientCredentialsToken },
+} = require("@sap/xssec");
 
 const { UAA_INSTANCE_NAME } = require("../constants");
 
 const loadFiles = async (envPath) => {
   const resolvedPath = resolve(process.cwd(), envPath);
   const files = await readdir(resolvedPath);
-  const envFiles = files.filter((file) => /^\.env\d*$/g.test(file));
+  const envFiles = files.filter((file) => /^\.\d+\.env$/g.test(file));
   const envPaths = envFiles.map((file) => resolve(resolvedPath, file));
 
   envPaths.forEach((path) => config({ path }));
 };
 
-class UAAToken {
-  constructor() {
-    this.token = null;
-
-    this.isExpired = this.isExpired.bind(this);
-    this.fetch = this.fetch.bind(this);
+const isTokenExpired = (token) => {
+  if (!token) {
+    return Promise.resolve(true);
   }
 
-  get value() {
-    return this.token;
-  }
+  const credentials = cfServiceCredentials({
+    name: UAA_INSTANCE_NAME,
+  });
 
-  set value(newValue) {
-    this.token = newValue;
-  }
-
-  isExpired() {
-    if (!this.token) {
-      return Promise.resolve(true);
-    }
-
-    const credentials = cfServiceCredentials({
-      name: UAA_INSTANCE_NAME,
+  return new Promise((resolve, reject) => {
+    createSecurityContext(token, credentials, "XSUAA", (error) => {
+      if (!error) {
+        resolve(false);
+      } else if (error.name === "TokenExpiredError") {
+        resolve(true);
+      } else {
+        reject(error);
+      }
     });
-    const { token } = this;
-    return new Promise((resolve, reject) => {
-      createSecurityContext(token, credentials, "XSUAA", (error) => {
-        if (!error) {
-          resolve(false);
-        } else if (error.name === "TokenExpiredError") {
-          resolve(true);
-        } else {
+  });
+};
+
+const fetchToken = () => {
+  console.log("[info]", "Fetching new proxy token...");
+
+  const credentials = cfServiceCredentials({
+    name: UAA_INSTANCE_NAME,
+  });
+
+  return new Promise((resolve, reject) => {
+    requestClientCredentialsToken(
+      null,
+      credentials,
+      null,
+      null,
+      (error, token) => {
+        if (error) {
           reject(error);
+          return;
         }
-      });
-    });
-  }
-
-  fetch() {
-    console.log("[info]", "Fetching new proxy token...");
-
-    const credentials = cfServiceCredentials({
-      name: UAA_INSTANCE_NAME,
-    });
-
-    let self = this;
-
-    return new Promise((resolve, reject) => {
-      requests.requestClientCredentialsToken(
-        null,
-        credentials,
-        null,
-        null,
-        (error, token) => {
-          if (error) {
-            reject(error);
-            return;
-          }
-          self.token = token;
-          resolve();
-        }
-      );
-    });
-  }
-}
+        resolve(token);
+      }
+    );
+  });
+};
 
 const run = (port, log) => {
   const target = process.env.CFDP_TARGET;
@@ -94,7 +77,7 @@ const run = (port, log) => {
     throw new Error("Variable CFDP_TARGET not found. Run cfdp bind first");
   }
 
-  const token = new UAAToken();
+  let token = null;
 
   const proxy = createProxyServer({ target, changeOrigin: true });
 
@@ -112,17 +95,16 @@ const run = (port, log) => {
     url.pathname = join("/", destination, url.pathname);
     req.url = url.href;
 
-    const expired = await token.isExpired();
+    const expired = await isTokenExpired(token);
     if (expired) {
-      await token.fetch();
+      token = await fetchToken();
     }
 
     if (req.headers.authorization) {
-      const authorization = req.headers.authorization;
-      req.headers["X-Destination-Authorization"] = authorization;
+      req.headers["X-Destination-Authorization"] = req.headers.authorization;
     }
 
-    req.headers.authorization = `Bearer ${token.value}`;
+    req.headers.authorization = `Bearer ${token}`;
 
     proxy.web(req, res);
   });
