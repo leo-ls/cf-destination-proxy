@@ -5,15 +5,15 @@ parameters:
   enable-parallel-deployments: true
 modules:
   - name: cf-destination-proxy
-    type: nodejs
+    type: approuter.nodejs
     path: app
     requires:
       - name: cf-destination-proxy-uaa
       - name: cf-destination-proxy-connectivity
       - name: cf-destination-proxy-destination
     parameters:
-      disk-quota: 128M
-      memory: 64M
+      disk-quota: 256M
+      memory: 128M
     build-parameters:
       ignore:
         - default-env.json
@@ -23,7 +23,7 @@ resources:
     parameters:
       path: ./xs-security.json
       service: xsuaa
-      service-plan: application
+      service-plan: broker
   - name: cf-destination-proxy-connectivity
     type: org.cloudfoundry.managed-service
     parameters:

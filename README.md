@@ -16,15 +16,15 @@ In principle, this proxy works just like the "On Premise Web Proxy for WebIDE wo
 
 Proxying local requests to CF destinations takes 3 steps:  
 
-1. Your local application router checks the environment for the ```destinations``` variable, and forwards the request to the local ```proxyHost:proxyPort```;
+1. Your app's application router checks the environment for the ```destinations``` variable, and forwards the request to the local ```proxyHost:proxyPort```;
 2. The local proxy server rewrites the request origin and path and then forwards it to the deployed proxy, with appropriate authorization;
-3. The remote proxy extracts the destination name from the rewritten path, fetches the destination from the CF Destination service and finally forwards the original request to the destination.
+3. The remote proxy (which is essentially a [```@sap/approuter```](https://www.npmjs.com/package/@sap/approuter)) extracts the destination name from the rewritten path, fetches the destination from the CF Destination service and finally forwards the original request to the destination.
 
 ## Usage
 
 ### Prerequisites
 
-This tool should be deployed in a development space in SAP BTP (preferrably 😅), so you must have appropriate accesses to the deployment target.
+This tool should be deployed in a development space in SAP BTP, so you must have appropriate accesses to the deployment target.
 
 Also, your project must have a local [application router](https://www.npmjs.com/package/@sap/approuter).
 
@@ -45,10 +45,17 @@ npm install --save-dev cf-destination-proxy
 ```
 
 #### 2. Then, in your approuter folder, run:
+
 ```bash
 cfdp bind https://your-cf-destination-proxy-deployed-app-route
 ```
-> This will create a local ```.env``` file with binding information from the deployed proxy (similar to the SAP BAS "Run configuration" service binding).
+
+This will create a local ```.env``` file with binding information from the deployed proxy (similar to the SAP BAS "Run configuration" service binding).  
+
+**ATTENTION: DO NOT commit any generated ```*.env``` files to your repositories, as they contain credentials to your SAP BTP account.** 
+
+Always remember this paragraph from the [12 Factor App Config chapter](https://12factor.net/config):
+> A litmus test for whether an app has all config correctly factored out of the code is whether the codebase could be made open source at any moment, without compromising any credentials.
 
 #### 3. Load the ```.env``` file when you run your approuter locally.  
 
@@ -70,7 +77,9 @@ To automate this in VS Code, create a script in your approuter's ```package.json
     "start": "node node_modules/@sap/approuter/approuter.js",
     "proxy": "cfdp run",
 ```
+
 Then, create a task in ```.vscode/launch.json``` like so:
+
 ```json
 "version": "2.0.0",
 "tasks": [
@@ -95,12 +104,10 @@ Then, create a task in ```.vscode/launch.json``` like so:
         "label": "Run cf-destination-proxy"
     },
 ```
+
 At last, add the created task as a ```preLaunchTask``` in your run configuration:
+
 ```json
 "preLaunchTask": "Run cf-destination-proxy",
 "outputCapture": "std"
 ```
-
-## To-dos
-
-- [ ] Add support for websockets

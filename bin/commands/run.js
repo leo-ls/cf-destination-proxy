@@ -92,7 +92,7 @@ const run = (port, log) => {
       );
     }
 
-    url.pathname = join("/", destination, url.pathname);
+    url.pathname = join("/proxy", destination, url.pathname);
     req.url = url.href;
 
     const expired = await isTokenExpired(token);
@@ -101,7 +101,7 @@ const run = (port, log) => {
     }
 
     if (req.headers.authorization) {
-      req.headers["X-Destination-Authorization"] = req.headers.authorization;
+      req.headers["x-approuter-authorization"] = req.headers.authorization;
     }
 
     req.headers.authorization = `Bearer ${token}`;

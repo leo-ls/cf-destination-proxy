@@ -1,0 +1,15 @@
+{
+  "authenticationMethod": "route",
+  "sessionTimeout": 15,
+  "routes": [
+    {
+      "source": "^/proxy/([^/]+)(.*)$",
+      "destination": "$1",
+      "target": "$2",
+      "authenticationType": "none"
+    }
+  ],
+  "websockets": {
+    "enabled": true
+  }
+}

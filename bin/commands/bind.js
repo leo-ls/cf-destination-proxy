@@ -92,14 +92,6 @@ const getAppGuid = (url, authContext) => {
 const getServiceCredentials = (service, appGuid, authContext) => {
   console.log("[info]", `Fetching service credentials for ${service}...`);
 
-  const options = {
-    params: {
-      app_guids: appGuid,
-      service_instance_names: service,
-      type: "app",
-    },
-  };
-
   const cloudFoundryAPI = axios.create(authContext);
 
   const handleBindingsResponse = ({ data: { resources = [] } }) => {
@@ -116,16 +108,22 @@ const getServiceCredentials = (service, appGuid, authContext) => {
     handleBindingsResponse
   );
 
-  const handleCredentialsResponse = ({ data }) => {
-    if (!data.credentials) {
+  const handleCredentialsResponse = ({ data: { credentials } }) => {
+    if (!credentials) {
       throw new Error(`API error - could not fetch credentials for ${service}`);
     }
 
-    return data.credentials;
+    return credentials;
   };
 
   return cloudFoundryAPI
-    .get("/v3/service_credential_bindings", options)
+    .get("/v3/service_credential_bindings", {
+      params: {
+        app_guids: appGuid,
+        service_instance_names: service,
+        type: "app",
+      },
+    })
     .then((detailsURL) => {
       cloudFoundryAPI.interceptors.response.eject(bindingsInterceptor);
       cloudFoundryAPI.interceptors.response.use(handleCredentialsResponse);
@@ -136,13 +134,12 @@ const getServiceCredentials = (service, appGuid, authContext) => {
 const getDestinationNames = (credentials) => {
   const { uri, url, clientid, clientsecret } = credentials;
 
-  const options = {
+  const destinationsAPI = axios.create({
     baseURL: uri,
     params: {
       $select: "Name",
     },
-  };
-  const destinationsAPI = axios.create(options);
+  });
   destinationsAPI.interceptors.response.use(({ data = [] }) =>
     data.map(({ Name }) => Name)
   );
@@ -200,13 +197,14 @@ const buildEnv = async (route, proxyPort, authContext) => {
     xsuaa: [
       {
         label: "xsuaa",
-        plan: "application",
+        plan: "broker",
         name: UAA_INSTANCE_NAME,
         tags: ["xsuaa"],
         credentials,
       },
-    ],
+    ]
   };
+
   const destinations = destinationNames.map((name) => ({
     name,
     url: `http://${name}.dest`,
@@ -218,7 +216,6 @@ const buildEnv = async (route, proxyPort, authContext) => {
   return (
     `VCAP_SERVICES=${JSON.stringify(VCAP_SERVICES)}\n` +
     `destinations=${JSON.stringify(destinations)}\n` +
-    `CFDP_PORT=${proxyPort}\n` +
     `CFDP_TARGET=${target}`
   );
 };
@@ -226,18 +223,18 @@ const buildEnv = async (route, proxyPort, authContext) => {
 const writeEnv = async (env) => {
   const baseFileName = ".env";
   let fileName = baseFileName;
-  let exists = false;
+  let doesFileExist = false;
   let index = 0;
 
-  while (!exists) {
-    exists = existsSync(`./${fileName}`);
-    if (!exists) {
+  while (!doesFileExist) {
+    doesFileExist = existsSync(`./${fileName}`);
+    if (!doesFileExist) {
       await writeFile(`./${fileName}`, env);
-      exists = true;
+      doesFileExist = true;
       console.log("[info]", `File ${fileName} created with binding parameters`);
     } else {
       fileName = `.${++index}${baseFileName}`;
-      exists = false;
+      doesFileExist = false;
     }
   }
 };
