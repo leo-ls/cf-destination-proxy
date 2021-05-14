@@ -1,0 +1,8 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": ["xs-app.json"],
+      "url": "./.vscode/schemas/xs-app-schema.json"
+    }
+  ]
+}
