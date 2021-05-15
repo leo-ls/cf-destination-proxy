@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.1](https://github.com/leo-ls/cf-destination-proxy/compare/v1.0.0...v1.0.1) (2021-05-15)
+
+
+### Bug Fixes
+
+* Fixed .env pattern matching ([310eed1](https://github.com/leo-ls/cf-destination-proxy/commit/310eed1e0a32412139d0c171da965ccfaba1b8ae))
+
 ## [1.0.0](https://github.com/leo-ls/cf-destination-proxy/compare/v0.0.9...v1.0.0) (2021-05-14)
 
 
