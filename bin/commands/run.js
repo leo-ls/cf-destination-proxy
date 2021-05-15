@@ -19,7 +19,7 @@ const { UAA_INSTANCE_NAME } = require("../constants");
 const loadFiles = async (envPath) => {
   const resolvedPath = resolve(process.cwd(), envPath);
   const files = await readdir(resolvedPath);
-  const envFiles = files.filter((file) => /^\.\d+\.env$/g.test(file));
+  const envFiles = files.filter((file) => /^(\.\d+)?\.env$/g.test(file));
   const envPaths = envFiles.map((file) => resolve(resolvedPath, file));
 
   envPaths.forEach((path) => config({ path }));
