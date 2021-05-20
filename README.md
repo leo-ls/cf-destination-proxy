@@ -3,6 +3,7 @@
 Proxy for local development using Cloud Foundry destinations in SAP BTP
 
 [![Build Status](https://dev.azure.com/leo-ls/cf-destination-project/_apis/build/status/leo-ls.cf-destination-proxy?branchName=main)](https://dev.azure.com/leo-ls/cf-destination-project/_build/latest?definitionId=3&branchName=main)
+[![npm](https://img.shields.io/npm/v/cf-destination-proxy)](https://www.npmjs.com/package/cf-destination-proxy)
 
 ## Motivation
 
