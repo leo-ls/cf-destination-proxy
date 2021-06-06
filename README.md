@@ -51,7 +51,7 @@ npm install --save-dev cf-destination-proxy
 cfdp bind https://your-cf-destination-proxy-deployed-app-route
 ```
 
-This will create a local ```.env``` file with binding information from the deployed proxy (similar to the SAP BAS "Run configuration" service binding).  
+This will create a ```.env``` file with binding information from the deployed proxy (similar to the SAP BAS "Run configuration" service binding). You can configure some [options](#cli-options) for this command.
 
 **ATTENTION: DO NOT commit any generated ```*.env``` files to your repositories, as they contain credentials to your SAP BTP account.** 
 
@@ -71,6 +71,8 @@ For example, in a ```.vscode/launch.json``` file, add this property to your run 
 ```bash
 cfdp run
 ```
+This command also accepts some [options](#cli-options).  
+
 To automate this in VS Code, create a script in your approuter's ```package.json``` file like this:
 
 ```json
@@ -112,3 +114,14 @@ At last, add the created task as a ```preLaunchTask``` in your run configuration
 "preLaunchTask": "Run cf-destination-proxy",
 "outputCapture": "std"
 ```
+
+### <a name="cli-options"></a>CLI options
+
+* **```-e, --env-path <path>```** *(default: current directory)*  
+An absolute or relative path for the new file (in ```bind```) or to read files from (in ```run```).
+
+* **```-p, --port <port>```** *(default: 8887)*  
+The port where the local proxy will run. If you want to use this option, you must specify the same value for the ```bind``` and ```run``` commands.
+
+* **```-l, --log```** *(only for ```run```)*  
+Log the proxying of requests (target and destination only).
