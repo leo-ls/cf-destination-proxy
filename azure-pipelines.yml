@@ -6,8 +6,8 @@ pool:
 
 steps:
   - checkout: self
-    clean: true
-    persistCredentials: true
+    clean: "true"
+    persistCredentials: "true"
 
   - task: NodeTool@0
     displayName: "Install Node.js"
@@ -48,8 +48,8 @@ steps:
   - task: CopyFiles@2
     displayName: "Copy .mtar to staging directory"
     inputs:
-      contents: "mta_archives/**"
-      targetFolder: $(Build.ArtifactStagingDirectory)
+      Contents: "mta_archives/**"
+      TargetFolder: $(Build.ArtifactStagingDirectory)
 
   - task: GitHubRelease@0
     displayName: "Create GitHub release"

@@ -1,7 +1,7 @@
 {
   "private": true,
   "dependencies": {
-    "@sap/approuter": "^10.2.0",
+    "@sap/approuter": "^10.4.0",
     "cors": "^2.8.5"
   },
   "scripts": {
