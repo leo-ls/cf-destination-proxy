@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/leo-ls/cf-destination-proxy/compare/v1.0.1...v1.1.0) (2021-06-06)
+
+
+### Features
+
+* Added --env-path option to cfdp bind ([7f1f61f](https://github.com/leo-ls/cf-destination-proxy/commit/7f1f61ff63977e0ac3f9085b41d28cf189140afe))
+
 ### [1.0.1](https://github.com/leo-ls/cf-destination-proxy/compare/v1.0.0...v1.0.1) (2021-05-15)
 
 
