@@ -6,6 +6,7 @@ const {
   promises: { writeFile },
   existsSync,
 } = require("fs");
+const { resolve } = require("path");
 const { URLSearchParams } = require("url");
 
 const {
@@ -220,21 +221,19 @@ const buildEnv = async (route, proxyPort, authContext) => {
   );
 };
 
-const writeEnv = async (env) => {
+const writeEnv = async (env, envPath) => {
   const baseFileName = ".env";
-  let fileName = baseFileName;
-  let doesFileExist = false;
+  let fileName = resolve(process.cwd(), envPath, baseFileName);
+  let isFileWritten = false;
   let index = 0;
 
-  while (!doesFileExist) {
-    doesFileExist = existsSync(`./${fileName}`);
-    if (!doesFileExist) {
-      await writeFile(`./${fileName}`, env);
-      doesFileExist = true;
+  while (!isFileWritten) {
+    if (!existsSync(fileName)) {
+      await writeFile(fileName, env);
+      isFileWritten = true;
       console.log("[info]", `File ${fileName} created with binding parameters`);
     } else {
-      fileName = `.${++index}${baseFileName}`;
-      doesFileExist = false;
+      fileName = resolve(process.cwd(), envPath, `.${++index}${baseFileName}`);
     }
   }
 };
@@ -257,6 +256,7 @@ module.exports = async (route, options) => {
 
   const answers = await prompt(questions);
   const authContext = await authenticate(route, answers);
-  const env = await buildEnv(route, options.port, authContext);
-  await writeEnv(env);
+  const { port, envPath } = options;
+  const env = await buildEnv(route, port, authContext);
+  await writeEnv(env, envPath);
 };
