@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.14](https://github.com/leo-ls/cf-destination-proxy/compare/v1.1.12...v1.1.14) (2022-03-04)
+
 ### [1.1.13](https://github.com/leo-ls/cf-destination-proxy/compare/v1.1.12...v1.1.13) (2022-02-14)
 
 ### [1.1.12](https://github.com/leo-ls/cf-destination-proxy/compare/v1.1.7...v1.1.12) (2022-02-14)
