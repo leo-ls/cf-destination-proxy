@@ -27,7 +27,7 @@
     "cfdp": "./bin/cfdp.js"
   },
   "devDependencies": {
-    "@commitlint/cli": "^12.1.1",
+    "@commitlint/cli": "^17.6.1",
     "@commitlint/config-conventional": "^12.1.1",
     "conventional-changelog-cli": "^2.1.1",
     "cross-var": "^1.1.0",
